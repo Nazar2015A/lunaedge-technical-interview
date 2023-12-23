@@ -107,27 +107,25 @@ function App() {
 
     if (firstNameError || lastNameError || pokemonTeamError) {
       return;
-    } else {
-      setModal(true);
-
-      const updatedPickedPokemons = data.pokemonTeam.map(
-        (pickedPokemon: any) => {
-          const correspondingPokemon = pokemonList.find(
-            (pok: any) => pok.name === pickedPokemon.value
-          );
-          if (correspondingPokemon) {
-            return {
-              ...pickedPokemon,
-              url: correspondingPokemon.url,
-            };
-          }
-
-          return pickedPokemon;
-        }
-      );
-
-      setPickedPockemons(updatedPickedPokemons);
     }
+
+    setModal(true);
+
+    const updatedPickedPokemons = data.pokemonTeam.map((pickedPokemon: any) => {
+      const correspondingPokemon = pokemonList.find(
+        (pok: any) => pok.name === pickedPokemon.value
+      );
+      if (correspondingPokemon) {
+        return {
+          ...pickedPokemon,
+          url: correspondingPokemon.url,
+        };
+      }
+
+      return pickedPokemon;
+    });
+
+    setPickedPockemons(updatedPickedPokemons);
   };
 
   const handleOverlayClick = (e: Event) => {
@@ -157,7 +155,7 @@ function App() {
     setLastNameError("");
 
     setModal(false);
-    toast.success('Your Pokémons have been saved!', {
+    toast.success("Your Pokémons have been saved!", {
       duration: 3000,
     });
   };
@@ -175,13 +173,16 @@ function App() {
               className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1"
             >
               First Name
-              <InfoIcon type='FirstName' />
+              <InfoIcon type="FirstName" />
             </label>
             <Controller
               name="firstName"
               control={methods.control}
               defaultValue=""
-              rules={getValidationRules("firstName")}
+              rules={{
+                ...getValidationRules("FirstName"),
+                validate: (value) => validateFirstName(value),
+              }}
               render={({ field, fieldState }) => (
                 <>
                   <input
@@ -218,13 +219,16 @@ function App() {
               className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1"
             >
               Last Name
-              <InfoIcon type='LastName' />
+              <InfoIcon type="LastName" />
             </label>
             <Controller
               name="lastName"
               control={methods.control}
               defaultValue=""
-              rules={getValidationRules("lastName")}
+              rules={{
+                ...getValidationRules("LastName"),
+                validate: (value) => validateLastName(value),
+              }}
               render={({ field, fieldState }) => (
                 <>
                   <input
@@ -266,7 +270,13 @@ function App() {
           </div>
         </form>
       </FormProvider>
-      {modal && <Modal pickedPokemons={pickedPokemons} onSave={onSave} setModal={setModal} />}
+      {modal && (
+        <Modal
+          pickedPokemons={pickedPokemons}
+          onSave={onSave}
+          setModal={setModal}
+        />
+      )}
       <Toaster />
     </div>
   );
